@@ -1,5 +1,3 @@
-var $ = require('jquery');
-
 $(document).ready(function() {
     var socket = io();
     var messageInput = $('#message');

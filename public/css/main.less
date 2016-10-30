@@ -1,13 +1,30 @@
 @main-background: #FAFFF9;
 @main-text: #006032;
-@list-font: 'Play', sans-serif;
+@body-font: 'Play', sans-serif;
 @main-font: 'Francois One', sans-serif;
 
 html, body {
     margin: auto;
     text-align: center;
+    background-color: @main-background;
+    font-family: @body-font;
+    padding: 20px;
 }
 
 #main-header {
-    font-family: 'Francois One' sans-serif;
+    font-family: @main-font;
+}
+
+#message {
+    display: none;
+}
+
+#messages {
+    border: 1px solid @main-text;
+    min-height: 150px;
+}
+
+#current-users {
+    border: 1px solid @main-text;
+    min-height: 150px;
 }

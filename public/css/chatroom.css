@@ -1,0 +1,23 @@
+html,
+body {
+  margin: auto;
+  text-align: center;
+  background-color: #FAFFF9;
+  font-family: 'Play', sans-serif;
+  padding: 20px;
+}
+#main-header {
+  font-family: 'Francois One', sans-serif;
+}
+#message {
+  display: none;
+}
+#messages {
+  border: 1px solid #006032;
+  min-height: 150px;
+}
+#current-users {
+  border: 1px solid #006032;
+  min-height: 150px;
+}
+/*# sourceMappingURL=chatroom.css.map */
