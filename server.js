@@ -41,14 +41,18 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('message', message);
     });
     
-    socket.on('disconnect', function(socket) {
+    socket.on('disconnect', function() {
         connections--;
-        io.emit('users_count', connections);
-        console.log(currentUsers[socket.userId - 1]);
-        console.log('Client disconnected', socket.userId);
-        delete currentUsers[socket.userId - 1];
+        for (var i = 0; i < currentUsers.length; i++) {
+            if (currentUsers[i].name === socket.username) {
+                console.log('Client disconnected', socket.username);
+                currentUsers.splice(i, 1);
+                io.emit('message', socket.username + ' has disconnected');
+            }
+        }
         io.emit('current-users', currentUsers);
-        console.log('Client disconnected', socket.userId);
+        console.log(currentUsers);
+        io.emit('users_count', connections);
     });
 });
 
