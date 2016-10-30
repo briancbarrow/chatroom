@@ -4,7 +4,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "mkdir": "mkdir build",
+    "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:css && npm run build:js",
+    "clean": "rm -rf build",
+    "build:html": "npm run clean:html && cp index.html build/",
+    "clean:html": "rm -f build/index.html",
+    "build:js": "npm run clean:js",
+    "clean:js": "rm -f build/chatroom.1.0.0.js build/chatroom.1.0.0.js.map",
+    "build:css": "npm run clean:css && lessc --source-map styles/main.less build/meetup-finder.css",
+    "clean:css": "rm -f build/meetup-finder.css build/meetup-finder.css.map",
   },
   "author": "Brian Barrow",
   "license": "ISC",
