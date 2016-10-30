@@ -1,13 +1,25 @@
+var $ = require('jquery');
+
 $(document).ready(function() {
     var socket = io();
-    var input = $('input');
+    var messageInput = $('#message');
+    var nicknameInput = $('#nickname');
     var messages = $('#messages');
     var connections = $('#connections');
     
-    var userId;
+    var getChatBox = function(test) {
+        $('#nickname').fadeOut('slow', function() {
+            $('#message').fadeIn('slow');
+        });
+        
+    };
 
     var addMessage = function(message) {
         messages.append('<div>' + message + '</div>');
+    };
+    
+    var addNickname = function(name) {
+        socket.emit('new-name', name);
     };
     
     var displayCount = function(count) {
@@ -20,41 +32,49 @@ $(document).ready(function() {
             $('#activity').html('');
         }, 4000);
     };
-    var stopActivity = function() {
-        
-    }
     
-    var getUserId = function(id) {
-        
-    }
-    
-    var newUser = function(id) {
-        messages.append('<div>User ' + id + ' is now connected</div>');
+    var newUser = function(name) {
+        messages.html('');
+        messages.append('<div id="notification">User ' + name + ' is now connected</div>');
+        $('#notification').fadeOut(4000);
     };
     
     var updateUsers = function(users) {
         $('#current-users').html('');
-        for(prop in users) {
-            $('#current-users').append('<p>' + prop + ' is online</p>');
-        };
+        users.forEach(function(e) {
+            if(users.length === 0) {
+                return;
+            } else {
+                $('#current-users').append('<p>' + e.name + ' is ready to chat</p>');
+            }
+        })
     }
-
-    input.on('keydown', function(event) {
+    
+    nicknameInput.on('keydown', function(event) {
         if (event.keyCode != 13) {
-            socket.emit('typing');
+            return;
+        }
+        var nickname = nicknameInput.val();
+        addNickname(nickname);
+        nicknameInput.val('');
+    });
+
+    messageInput.on('keydown', function(event) {
+        if (event.keyCode != 13) {
+            socket.emit('typing', socket.username);
             return;
         }
 
-        var message = input.val();
+        var message = messageInput.val();
         addMessage(message);
         socket.emit('message', message);
         socket.emit('stopped');
-        input.val('');
+        messageInput.val('');
     });
     socket.on('typing', displayActivity);
     socket.on('new-user', newUser);
-    // socket.on('stopped', stopActivity);
     socket.on('current-users', updateUsers);
     socket.on('users_count', displayCount);
     socket.on('message', addMessage);
+    socket.on('getchat', getChatBox);
 });

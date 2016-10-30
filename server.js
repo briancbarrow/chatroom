@@ -8,23 +8,32 @@ app.use(express.static('public'));
 var server = http.Server(app);
 var io = socket_io(server);
 var connections = 0;
-var currentUsers = {};
+var currentUsers = [];
+var len;
 
 
 io.on('connection', function(socket) {
     connections++;
-    var userId = connections;
-    currentUsers[connections] = connections;
-    console.log(currentUsers);
-    console.log('Client connected', connections);
+    socket.userId = connections;
+    // console.log('Client connected', socket.userId);
     io.emit('users_count', connections);
     io.emit('current-users', currentUsers);
     
-    socket.broadcast.emit('new-user', userId);
+    socket.on('new-name', function(name) {
+        console.log('User added:', name);
+        socket.username = name;
+        len = currentUsers.length;
+        currentUsers[len] = {};
+        currentUsers[len].name = socket.username;
+        console.log(currentUsers);
+        socket.broadcast.emit('new-user', socket.username);
+        io.emit('current-users', currentUsers);
+        socket.emit('getchat', len);
+    });
     
     socket.on('typing', function() {
-        var id = userId;
-        socket.broadcast.emit('typing', id);
+        var name = socket.username;
+        socket.broadcast.emit('typing', name);
     });
     
     socket.on('message', function(message) {
@@ -35,10 +44,11 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function(socket) {
         connections--;
         io.emit('users_count', connections);
-        console.log(currentUsers[userId]);
-        delete currentUsers[userId];
+        console.log(currentUsers[socket.userId - 1]);
+        console.log('Client disconnected', socket.userId);
+        delete currentUsers[socket.userId - 1];
         io.emit('current-users', currentUsers);
-        console.log('Client disconnected', connections);
+        console.log('Client disconnected', socket.userId);
     });
 });
 
